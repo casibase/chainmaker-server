@@ -24,6 +24,8 @@ import (
 )
 
 func main() {
+	beego.BConfig.CopyRequestBody = true
+
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"},
@@ -32,7 +34,7 @@ func main() {
 		AllowCredentials: true,
 	}))
 
-	port := beego.AppConfig.DefaultInt("httpport", 14000)
+	port := beego.AppConfig.DefaultInt("httpport", 13900)
 
 	err := util.StopOldInstance(port)
 	if err != nil {

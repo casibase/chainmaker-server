@@ -1,0 +1,63 @@
+chain_client:
+  # Chain ID
+  chain_id: "chain1"
+  # Organization ID
+  org_id: "wx-org1.chainmaker.org"
+  # Client user private key file path
+  user_key_file_path: "./crypto-config/wx-org1.chainmaker.org/user/admin1/admin1.tls.key"
+  # Client user certificate file path
+  user_crt_file_path: "./crypto-config/wx-org1.chainmaker.org/user/admin1/admin1.tls.crt"
+  # Client user encryption private key file path (TLS encryption certificate private key, used for GM-TLS dual certificate system; if not set, only single certificate is used)
+  user_enc_key_file_path: "./crypto-config/wx-org1.chainmaker.org/user/admin1/admin1.tls.enc.key"
+  # Client user encryption certificate file path (TLS encryption certificate, used for GM-TLS dual certificate system; if not set, only single certificate is used)
+  user_enc_crt_file_path: "./crypto-config/wx-org1.chainmaker.org/user/admin1/admin1.tls.enc.crt"
+  # Client user transaction signing private key file path (if not set, user_key_file_path will be used)
+  user_sign_key_file_path: "./crypto-config/wx-org1.chainmaker.org/user/admin1/admin1.sign.key"
+  # Client user transaction signing certificate file path (if not set, user_crt_file_path will be used)
+  user_sign_crt_file_path: "./crypto-config/wx-org1.chainmaker.org/user/admin1/admin1.sign.crt"
+  # Maximum polling count for getting transaction results in synchronous transaction result mode. Delete this item or set to <=0 to use default value 10
+  retry_limit: 10
+  # Wait time for each polling of transaction results in synchronous transaction result mode, unit: ms. Delete this item or set to <=0 to use default value 500
+  retry_interval: 500
+  # Alias of the current signing certificate. When this configuration item is set, the chain client object will automatically check whether this alias has been added to the chain, and if not, it will automatically upload this certificate alias to the chain,
+  # and all subsequent transactions will use the alias, which can reduce the transaction body size. If empty, it is not enabled.
+  #  alias: mycert1
+
+  nodes:
+    - # Node address, format: IP:Port:ConnectionCount
+      node_addr: "127.0.0.1:12301"
+      # Node connection count
+      conn_cnt: 10
+      # Whether RPC connection enables bidirectional TLS authentication
+      enable_tls: true
+      # Trust certificate pool paths
+      trust_root_paths:
+        - "./crypto-config/wx-org1.chainmaker.org/ca"
+      # TLS hostname
+      tls_host_name: "chainmaker.org"
+  archive:
+    # Data archiving off-chain storage related configuration
+    type: "mysql"
+    dest: "root:123456:localhost:3306"
+    secret_key: xxx
+  rpc_client:
+    max_receive_message_size: 16 # Maximum size allowed for a single message when grpc client receives messages (MB)
+    max_send_message_size: 16 # Maximum size allowed for a single message when grpc client sends messages (MB)
+    send_tx_timeout: 60 # grpc client transaction sending timeout
+    get_tx_timeout: 60 # rpc client transaction query timeout
+  pkcs11:
+    enabled: false # pkcs11 is not used by default
+    library: /usr/local/lib64/pkcs11/libupkcs11.so # path to the .so file of pkcs11 interface
+    label: HSM # label for the slot to be used
+    password: 11111111 # password to logon the HSM(Hardware security module)
+    session_cache_size: 10 # size of HSM session cache, default to 10
+    hash: "SHA256" # hash algorithm used to compute SKI
+  kms:
+    enabled: false            # kms enable flag, set true if use kms
+    is_public: true           # private cloud kms or public cloud kms, set true if use public kms
+    secret_id: ""             # cloud kms SecretId
+    secret_key: ""            # cloud kms SecretKey
+    address: "kms.tencentcloudapi.com" # kms server address, ip or dns
+    region: "ap-guangzhou"    # kms server region
+    sdk_scheme: "https"       # kms sdk scheme, http or https
+    ext_params: ""            # optional，this is a map string, like "{k1:v1, k2:v2}".
