@@ -20,7 +20,7 @@ ChainMaker Server is a lightweight HTTP service that provides a bridge between C
 
 ## Configuration
 
-The server runs on port 14000 by default. You can modify the port in the configuration file.
+The server runs on port 13900 by default. You can modify the port in the configuration file.
 
 ## API Endpoints
 
