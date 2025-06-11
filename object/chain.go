@@ -16,6 +16,7 @@ package object
 
 import (
 	"fmt"
+	"strconv"
 
 	"chainmaker.org/chainmaker/pb-go/v2/common"
 	chainmakersdk "chainmaker.org/chainmaker/sdk-go/v2"
@@ -44,8 +45,9 @@ type ChainmakerInfo struct {
 }
 
 type ChainmakerTxInfo struct {
-	txId   string
-	result string
+	TxId   string `json:"tx_id"`
+	Block  string `json:"block"`
+	Result string `json:"result"`
 }
 
 func InvokeContract(chainmakerInfo ChainmakerInfo) (ChainmakerTxInfo, error) {
@@ -73,24 +75,45 @@ func InvokeContract(chainmakerInfo ChainmakerInfo) (ChainmakerTxInfo, error) {
 	}
 
 	txId := resp.TxId
-	result := string(resp.ContractResult.Result)
 
-	return ChainmakerTxInfo{txId: txId, result: result}, nil
+	transactionInfo, err := client.GetTxByTxId(txId)
+	if err != nil {
+		return ChainmakerTxInfo{}, fmt.Errorf("query contract error: %v", err)
+	}
+
+	return ChainmakerTxInfo{TxId: txId, Block: strconv.FormatUint(transactionInfo.GetBlockHeight(), 10)}, nil
 }
 
-func QueryContract(chainmakerInfo ChainmakerInfo) (string, error) {
+func QueryContract(chainmakerInfo ChainmakerInfo) (ChainmakerTxInfo, error) {
 	config := chainmakerInfo.ChainConfig
 
 	client, err := createClient(config)
 	if err != nil {
-		return "", err
+		return ChainmakerTxInfo{}, err
 	}
 	transactionInfo, err := client.GetTxByTxId(chainmakerInfo.TxId)
 	if err != nil {
-		return "", fmt.Errorf("query contract error: %v", err)
+		return ChainmakerTxInfo{}, fmt.Errorf("query contract error: %v", err)
 	}
 
-	return fmt.Sprintf("The query result for block [%s] is: %s", transactionInfo.GetBlockHeight(), transactionInfo.GetTransaction().GetResult()), nil
+	parameters := transactionInfo.GetTransaction().GetPayload().GetParameters()
+	if parameters == nil {
+		return ChainmakerTxInfo{}, fmt.Errorf("query contract result is nil")
+	}
+	result := ""
+	for _, parameter := range parameters {
+		if parameter.Key == "data" {
+			result = string(parameter.Value)
+			break
+		}
+	}
+
+	txInfo := ChainmakerTxInfo{
+		TxId:   chainmakerInfo.TxId,
+		Block:  strconv.FormatUint(transactionInfo.GetBlockHeight(), 10),
+		Result: result,
+	}
+	return txInfo, nil
 }
 
 func createClient(config ChainConfig) (*chainmakersdk.ChainClient, error) {
