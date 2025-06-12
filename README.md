@@ -12,6 +12,17 @@ ChainMaker Server is a lightweight HTTP service that provides a bridge between C
 - Easy integration with Casibase
 - No CGO dependency required for client applications
 
+## Compatibility Notice
+
+**Important:**  
+Currently, ChainMaker Server only supports ChainMaker blockchains with **TLS disabled** and **authtype set to `permissionedWithCert`**. If you encounter errors when invoking transaction or query APIs, please verify that your ChainMaker server configuration meets these requirements.  
+Additionally, ensure that the `provider` configuration in your Casibase setup is consistent with your ChainMaker network settings.
+
+For details on how to check and modify your ChainMaker chain configuration, please refer to the official documentation:  
+- [ChainMaker Configuration Guide](https://docs.chainmaker.org.cn/manage/%E9%95%BF%E5%AE%89%E9%93%BE%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86.html)
+
+If your configuration does not meet the above requirements, the service may not function as expected.
+
 ## Technical Stack
 
 - Go 1.22+
