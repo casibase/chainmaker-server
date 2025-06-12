@@ -19,7 +19,7 @@ func TestChainClientGetChainMakerServerVersion(t *testing.T) {
 	}
 	version, err := client.GetChainMakerServerVersion()
 	if err != nil {
-		t.Errorf("get chainmaker server version failed, err: %s", err)
+		t.Errorf("get chainserver version failed, err: %s", err)
 	}
-	fmt.Println("get chainmaker server version:", version)
+	fmt.Println("get chainserver version:", version)
 }

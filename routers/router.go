@@ -14,18 +14,18 @@
 
 // Package routers
 // @APIVersion 1.70.0
-// @Title chainmaker-server RESTful API
-// @Description Swagger Docs of chainmaker-server API
+// @Title chainserver RESTful API
+// @Description Swagger Docs of chainserver API
 // @Contact admin@casibase.org
 // @SecurityDefinition AccessToken apiKey Authorization header
 // @Schemes https,http
-// @ExternalDocs Find out more about chainmaker-server
+// @ExternalDocs Find out more about chainserver
 // @ExternalDocsUrl https://casibase.org/
 package routers
 
 import (
 	"github.com/beego/beego"
-	"github.com/casibase/chainmaker-server/controllers"
+	"github.com/casibase/chainserver/controllers"
 )
 
 func init() {

@@ -17,7 +17,7 @@ package controllers
 import (
 	"encoding/json"
 
-	"github.com/casibase/chainmaker-server/object"
+	"github.com/casibase/chainserver/object"
 )
 
 // InvokeContract

@@ -1,10 +1,10 @@
-# ChainMaker Server
+# ChainServer
 
 A HTTP service wrapper for ChainMaker SDK, designed to work with Casibase without requiring CGO support.
 
 ## Overview
 
-ChainMaker Server is a lightweight HTTP service that provides a bridge between Casibase and ChainMaker blockchain. Instead of directly integrating ChainMaker SDK (which requires CGO), this service offers HTTP endpoints to interact with ChainMaker blockchain, making it more flexible and easier to deploy.
+ChainServer is a lightweight HTTP service that provides a bridge between Casibase and ChainMaker blockchain. Instead of directly integrating ChainMaker SDK (which requires CGO), this service offers HTTP endpoints to interact with ChainMaker blockchain, making it more flexible and easier to deploy.
 
 ## Features
 
@@ -15,7 +15,7 @@ ChainMaker Server is a lightweight HTTP service that provides a bridge between C
 ## Compatibility Notice
 
 **Important:**  
-Currently, ChainMaker Server only supports ChainMaker blockchains with **TLS disabled** and **authtype set to `permissionedWithCert`**. If you encounter errors when invoking transaction or query APIs, please verify that your ChainMaker server configuration meets these requirements.  
+Currently, ChainServer only supports ChainMaker blockchains with **TLS disabled** and **authtype set to `permissionedWithCert`**. If you encounter errors when invoking transaction or query APIs, please verify that your ChainMaker server configuration meets these requirements.  
 Additionally, ensure that the `provider` configuration in your Casibase setup is consistent with your ChainMaker network settings.
 
 For details on how to check and modify your ChainMaker chain configuration, please refer to the official documentation:  
@@ -42,7 +42,7 @@ The service provides HTTP endpoints for ChainMaker operations. Detailed API docu
 1. Install Go 1.22 or later
 2. Clone the repository
 ```bash
-git clone https://github.com/casibase/chainmaker-server.git
+git clone https://github.com/casibase/chainserver.git
 ```
 3. Install dependencies
 ```bash

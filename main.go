@@ -19,8 +19,8 @@ import (
 
 	"github.com/beego/beego"
 	"github.com/beego/beego/plugins/cors"
-	_ "github.com/casibase/chainmaker-server/routers"
-	"github.com/casibase/chainmaker-server/util"
+	_ "github.com/casibase/chainserver/routers"
+	"github.com/casibase/chainserver/util"
 )
 
 func main() {

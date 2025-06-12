@@ -1,4 +1,4 @@
-module github.com/casibase/chainmaker-server
+module github.com/casibase/chainserver
 
 go 1.22.0
 
