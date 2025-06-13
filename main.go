@@ -25,6 +25,7 @@ import (
 
 func main() {
 	beego.BConfig.CopyRequestBody = true
+	beego.BConfig.RunMode = "dev"
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowOrigins:     []string{"*"},
