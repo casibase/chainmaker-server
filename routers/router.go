@@ -42,4 +42,6 @@ func initAPI() {
 
 	beego.Router("/api/invoke-contract", &controllers.ApiController{}, "POST:InvokeContract")
 	beego.Router("/api/query-contract", &controllers.ApiController{}, "POST:QueryContract")
+
+	beego.Router("/api/get-form-data", &controllers.ApiController{}, "POST:GetFormData")
 }
