@@ -76,13 +76,13 @@ func InvokeContract(chainmakerInfo ChainmakerInfo) (ChainmakerTxInfo, error) {
 		})
 	}
 
-	resp, err := client.InvokeContract(chainmakerInfo.ContractName, chainmakerInfo.ContractMethod, "", kvPairs, -1, false)
+	resp, err := client.InvokeContract(chainmakerInfo.ContractName, chainmakerInfo.ContractMethod, "", kvPairs, -1, true)
 	if err != nil {
 		return ChainmakerTxInfo{}, fmt.Errorf("invoke contract error: %v", err)
 	}
 
 	if resp.Code != common.TxStatusCode_SUCCESS {
-		return ChainmakerTxInfo{}, fmt.Errorf("invoke contract failed, [code:%d]/[msg:%s]", resp.Code, resp.Message)
+		return ChainmakerTxInfo{}, fmt.Errorf("invoke contract failed, [result:%s]/[msg:%s]", resp.ContractResult.Result, resp.ContractResult.Message)
 	}
 
 	txId := resp.TxId
