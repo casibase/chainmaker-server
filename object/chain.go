@@ -15,6 +15,7 @@
 package object
 
 import (
+	"encoding/json"
 	"fmt"
 	"strconv"
 
@@ -58,14 +59,24 @@ func InvokeContract(chainmakerInfo ChainmakerInfo) (ChainmakerTxInfo, error) {
 		return ChainmakerTxInfo{}, err
 	}
 
-	kvPairs := []*common.KeyValuePair{
-		{
-			Key:   "data",
-			Value: []byte(chainmakerInfo.Data),
-		},
+	var dataMap map[string]string
+	if err := json.Unmarshal([]byte(chainmakerInfo.Data), &dataMap); err != nil {
+		return ChainmakerTxInfo{}, fmt.Errorf("parse json data error: %v", err)
 	}
 
-	resp, err := client.InvokeContract(chainmakerInfo.ContractName, chainmakerInfo.ContractMethod, "", kvPairs, -1, true)
+	kvPairs := make([]*common.KeyValuePair, 0, len(dataMap))
+	for key, value := range dataMap {
+		if key == "key" {
+			owner, name := GetOwnerAndNameFromId(value, "/")
+			value = GetIdFromOwnerAndName(owner, name, "_")
+		}
+		kvPairs = append(kvPairs, &common.KeyValuePair{
+			Key:   key,
+			Value: []byte(value),
+		})
+	}
+
+	resp, err := client.InvokeContract(chainmakerInfo.ContractName, chainmakerInfo.ContractMethod, "", kvPairs, -1, false)
 	if err != nil {
 		return ChainmakerTxInfo{}, fmt.Errorf("invoke contract error: %v", err)
 	}
@@ -100,18 +111,26 @@ func QueryContract(chainmakerInfo ChainmakerInfo) (ChainmakerTxInfo, error) {
 	if parameters == nil {
 		return ChainmakerTxInfo{}, fmt.Errorf("query contract result is nil")
 	}
-	result := ""
+
+	resultMap := make(map[string]string)
 	for _, parameter := range parameters {
-		if parameter.Key == "data" {
-			result = string(parameter.Value)
-			break
+		if parameter.Key == "key" {
+			owner, name := GetOwnerAndNameFromId(string(parameter.Value), "_")
+			resultMap[parameter.Key] = GetIdFromOwnerAndName(owner, name, "/")
+		} else {
+			resultMap[parameter.Key] = string(parameter.Value)
 		}
+	}
+
+	resultBytes, err := json.Marshal(resultMap)
+	if err != nil {
+		return ChainmakerTxInfo{}, fmt.Errorf("marshal result error: %v", err)
 	}
 
 	txInfo := ChainmakerTxInfo{
 		TxId:   chainmakerInfo.TxId,
 		Block:  strconv.FormatUint(transactionInfo.GetBlockHeight(), 10),
-		Result: result,
+		Result: string(resultBytes),
 	}
 	return txInfo, nil
 }
