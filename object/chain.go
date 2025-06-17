@@ -46,9 +46,10 @@ type ChainmakerInfo struct {
 }
 
 type ChainmakerTxInfo struct {
-	TxId   string `json:"tx_id"`
-	Block  string `json:"block"`
-	Result string `json:"result"`
+	TxId      string `json:"tx_id"`
+	Block     string `json:"block"`
+	BlockHash string `json:"block_hash"`
+	Result    string `json:"result"`
 }
 
 func InvokeContract(chainmakerInfo ChainmakerInfo) (ChainmakerTxInfo, error) {
@@ -92,7 +93,14 @@ func InvokeContract(chainmakerInfo ChainmakerInfo) (ChainmakerTxInfo, error) {
 		return ChainmakerTxInfo{}, fmt.Errorf("query contract error: %v", err)
 	}
 
-	return ChainmakerTxInfo{TxId: txId, Block: strconv.FormatUint(transactionInfo.GetBlockHeight(), 10)}, nil
+	blockInfo, err := client.GetBlockByHeight(transactionInfo.GetBlockHeight(), true)
+	if err != nil {
+		return ChainmakerTxInfo{}, err
+	}
+
+	block := strconv.FormatUint(transactionInfo.GetBlockHeight(), 10)
+	blockHash := blockInfo.GetBlock().GetBlockHashStr()
+	return ChainmakerTxInfo{TxId: txId, Block: block, BlockHash: blockHash}, nil
 }
 
 func QueryContract(chainmakerInfo ChainmakerInfo) (ChainmakerTxInfo, error) {
