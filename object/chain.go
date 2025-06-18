@@ -61,14 +61,19 @@ func InvokeContract(chainmakerInfo ChainmakerInfo) (ChainmakerTxInfo, error) {
 	}
 
 	var dataMap map[string]string
-	if err := json.Unmarshal([]byte(chainmakerInfo.Data), &dataMap); err != nil {
-		return ChainmakerTxInfo{}, fmt.Errorf("parse json data error: %v", err)
+	err = json.Unmarshal([]byte(chainmakerInfo.Data), &dataMap)
+	if err != nil {
+		return ChainmakerTxInfo{}, fmt.Errorf("InvokeContract() error: %v", err)
 	}
 
 	kvPairs := make([]*common.KeyValuePair, 0, len(dataMap))
 	for key, value := range dataMap {
 		if key == "key" {
-			owner, name := GetOwnerAndNameFromId(value, "/")
+			owner, name, err := GetOwnerAndNameFromId(value, "/")
+			if err != nil {
+				return ChainmakerTxInfo{}, err
+			}
+
 			value = GetIdFromOwnerAndName(owner, name, "_")
 		}
 		kvPairs = append(kvPairs, &common.KeyValuePair{
@@ -79,18 +84,18 @@ func InvokeContract(chainmakerInfo ChainmakerInfo) (ChainmakerTxInfo, error) {
 
 	resp, err := client.InvokeContract(chainmakerInfo.ContractName, chainmakerInfo.ContractMethod, "", kvPairs, -1, true)
 	if err != nil {
-		return ChainmakerTxInfo{}, fmt.Errorf("invoke contract error: %v", err)
+		return ChainmakerTxInfo{}, fmt.Errorf("InvokeContract() error: %v", err)
 	}
 
 	if resp.Code != common.TxStatusCode_SUCCESS {
-		return ChainmakerTxInfo{}, fmt.Errorf("invoke contract failed, [result:%s]/[msg:%s]", resp.ContractResult.Result, resp.ContractResult.Message)
+		return ChainmakerTxInfo{}, fmt.Errorf("InvokeContract() error, result = %s, message = %s", resp.ContractResult.Result, resp.ContractResult.Message)
 	}
 
 	txId := resp.TxId
 
 	transactionInfo, err := client.GetTxByTxId(txId)
 	if err != nil {
-		return ChainmakerTxInfo{}, fmt.Errorf("query contract error: %v", err)
+		return ChainmakerTxInfo{}, fmt.Errorf("InvokeContract() error: %v", err)
 	}
 
 	blockInfo, err := client.GetBlockByHeight(transactionInfo.GetBlockHeight(), true)
@@ -123,7 +128,11 @@ func QueryContract(chainmakerInfo ChainmakerInfo) (ChainmakerTxInfo, error) {
 	resultMap := make(map[string]string)
 	for _, parameter := range parameters {
 		if parameter.Key == "key" {
-			owner, name := GetOwnerAndNameFromId(string(parameter.Value), "_")
+			owner, name, err := GetOwnerAndNameFromId(string(parameter.Value), "_")
+			if err != nil {
+				return ChainmakerTxInfo{}, fmt.Errorf("InvokeContract() error: %v", err)
+			}
+
 			resultMap[parameter.Key] = GetIdFromOwnerAndName(owner, name, "/")
 		} else {
 			resultMap[parameter.Key] = string(parameter.Value)
@@ -168,5 +177,6 @@ func createClient(config ChainConfig) (*chainmakersdk.ChainClient, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create chain client: %v", err)
 	}
+
 	return client, nil
 }
