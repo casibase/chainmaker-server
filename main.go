@@ -27,6 +27,7 @@ func main() {
 	beego.BConfig.CopyRequestBody = true
 	beego.BConfig.RunMode = "dev"
 
+	beego.SetStaticPath("/swagger", "swagger")
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "DELETE", "PUT", "PATCH", "OPTIONS"},

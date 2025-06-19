@@ -1,0 +1,183 @@
+swagger: "2.0"
+info:
+  title: ChainServer RESTful API
+  description: Swagger Docs of ChainServer Backend API
+  version: 1.0.0
+  contact:
+    email: admin@casibase.org
+basePath: /api
+schemes:
+- https
+- http
+paths:
+  /invoke-contract:
+    post:
+      tags:
+        - Chain API
+      description: invoke contract
+      operationId: ApiController.InvokeContract
+      parameters:
+        - in: body
+          name: body
+          description: contract invoke parameters
+          required: true
+          schema:
+            $ref: '#/definitions/object.ChainmakerInfo'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+
+  /query-contract:
+    post:
+      tags:
+        - Chain API
+      description: query contract
+      operationId: ApiController.QueryContract
+      parameters:
+        - in: body
+          name: body
+          description: contract query parameters
+          required: true
+          schema:
+            $ref: '#/definitions/object.ChainmakerInfo'
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+
+  /get-form-data:
+    post:
+      tags:
+        - Form API
+      description: get form data
+      operationId: ApiController.GetFormData
+      parameters:
+        - in: body
+          name: body
+          description: The form object
+          required: true
+          schema:
+            $ref: '#/definitions/object.Form'
+        - in: query
+          name: pageSize
+          description: The size of each page
+          required: false
+          type: string
+        - in: query
+          name: p
+          description: The number of the page
+          required: false
+          type: string
+      responses:
+        "200":
+          description: The Response object
+          schema:
+            $ref: '#/definitions/controllers.Response'
+definitions:
+  object.ChainConfig:
+    title: ChainConfig
+    type: object
+    properties:
+      chain_id:
+        type: string
+      org_id:
+        type: string
+      user_key:
+        type: string
+      user_cert:
+        type: string
+      sign_key:
+        type: string
+      sign_cert:
+        type: string
+      node_addr:
+        type: string
+      tls_host_name:
+        type: string
+      auth_type:
+        type: string
+      enable_tls:
+        type: boolean
+      ca_cert:
+        type: string
+  object.ChainmakerInfo:
+    title: ChainmakerInfo
+    type: object
+    properties:
+      chain_config:
+        $ref: '#/definitions/object.ChainConfig'
+      contract_name:
+        type: string
+      contract_method:
+        type: string
+      data:
+        type: string
+      txId:
+        type: string
+  object.ChainmakerTxInfo:
+    title: ChainmakerTxInfo
+    type: object
+    properties:
+      tx_id:
+        type: string
+      block:
+        type: string
+      block_hash:
+        type: string
+      result:
+        type: string
+  object.FormItem:
+    title: FormItem
+    type: object
+    properties:
+      name:
+        type: string
+      label:
+        type: string
+      type:
+        type: string
+      width:
+        type: string
+  object.Form:
+    title: Form
+    type: object
+    properties:
+      owner:
+        type: string
+      name:
+        type: string
+      createdTime:
+        type: string
+      displayName:
+        type: string
+      position:
+        type: string
+      formItems:
+        type: array
+        items:
+          $ref: '#/definitions/object.FormItem'
+  controllers.Response:
+    title: Response
+    type: object
+    properties:
+      status:
+        type: string
+      msg:
+        type: string
+      data:
+        description: |
+          - /invoke-contract, /query-contract: object.ChainmakerTxInfo
+          - /get-form-data: array of object (map[string]string)
+        type: object
+      data2:
+        description: |
+          - /get-form-data: integer (totalCount)
+        type: integer
+securityDefinitions:
+  AccessToken:
+    type: apiKey
+    name: Authorization
+    in: header
