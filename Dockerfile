@@ -1,6 +1,7 @@
-FROM golang:1.23.6 AS BACK
+FROM golang:1.23.6-alpine AS BACK
 WORKDIR /go/src/chainserver
 COPY . .
+RUN apk add --no-cache gcc musl-dev
 RUN chmod +x ./build.sh
 RUN ./build.sh
 
