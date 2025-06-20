@@ -8,6 +8,6 @@ services:
       target: STANDARD
     entrypoint: /bin/sh -c './server'
     ports:
-      - "8000:8000"
+      - "13900:13900"
     environment:
       RUNNING_IN_DOCKER: "true"
