@@ -102,9 +102,7 @@ The default service port is 13900. For troubleshooting or advanced usage, see th
 
 ## API Documentation (Swagger)
 
-After starting the service, you can view the API documentation via Swagger UI:
-
-- Open your browser and visit: [http://localhost:13900/swagger/index.html](http://localhost:13900/swagger/index.html)
+See: https://chainserver.casibase.com/swagger/index.html
 
 ## Building and Running
 
